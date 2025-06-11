@@ -1,0 +1,9 @@
+{
+	"name": "kse-healthcare-dev-adf",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "31a969c1-5355-4aa2-97ec-3f2a88d40b42",
+		"tenantId": "826a6d5a-e56c-4e57-942c-7402f739d56f"
+	}
+}
