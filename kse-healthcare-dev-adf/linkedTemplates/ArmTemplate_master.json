@@ -7,6 +7,10 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "kse-healthcare-dev-adf"
 		},
+		"ks_adb_delta_lake_ls_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'ks_adb_delta_lake_ls'"
+		},
 		"ks_adls_gen2_ls_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ks_adls_gen2_ls'"
@@ -49,6 +53,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"ks_adb_delta_lake_ls_accessToken": {
+						"value": "[parameters('ks_adb_delta_lake_ls_accessToken')]"
 					},
 					"ks_adls_gen2_ls_accountKey": {
 						"value": "[parameters('ks_adls_gen2_ls_accountKey')]"

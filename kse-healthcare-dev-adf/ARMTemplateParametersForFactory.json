@@ -5,6 +5,9 @@
 		"factoryName": {
 			"value": "kse-healthcare-dev-adf"
 		},
+		"ks_adb_delta_lake_ls_accessToken": {
+			"value": ""
+		},
 		"ks_adls_gen2_ls_accountKey": {
 			"value": ""
 		},
