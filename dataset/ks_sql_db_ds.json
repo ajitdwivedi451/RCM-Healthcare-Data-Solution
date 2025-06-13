@@ -1,0 +1,23 @@
+{
+	"name": "ks_sql_db_ds",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ks_azure_sql_db_ls",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"databaseName": {
+					"value": "@dataset().dbName",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"dbName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}
