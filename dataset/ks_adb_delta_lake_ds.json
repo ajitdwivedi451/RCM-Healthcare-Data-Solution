@@ -1,20 +1,11 @@
 {
-	"name": "ks_sql_db_ds",
+	"name": "ks_adb_delta_lake_ds",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "ks_azure_sql_db_ls",
-			"type": "LinkedServiceReference",
-			"parameters": {
-				"databaseName": {
-					"value": "@dataset().database_name",
-					"type": "Expression"
-				}
-			}
+			"referenceName": "ks_adb_delta_lake_ls",
+			"type": "LinkedServiceReference"
 		},
 		"parameters": {
-			"database_name": {
-				"type": "string"
-			},
 			"schema_name": {
 				"type": "string"
 			},
@@ -23,10 +14,9 @@
 			}
 		},
 		"annotations": [],
-		"type": "AzureSqlTable",
-		"schema": [],
+		"type": "AzureDatabricksDeltaLakeDataset",
 		"typeProperties": {
-			"schema": {
+			"database": {
 				"value": "@dataset().schema_name",
 				"type": "Expression"
 			},
@@ -34,6 +24,7 @@
 				"value": "@dataset().table_name",
 				"type": "Expression"
 			}
-		}
+		},
+		"schema": []
 	}
 }
