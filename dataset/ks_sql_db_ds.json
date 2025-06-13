@@ -5,14 +5,14 @@
 			"referenceName": "ks_azure_sql_db_ls",
 			"type": "LinkedServiceReference",
 			"parameters": {
-				"databaseName": {
-					"value": "@dataset().database_name",
+				"db_name": {
+					"value": "@dataset().db_name",
 					"type": "Expression"
 				}
 			}
 		},
 		"parameters": {
-			"database_name": {
+			"db_name": {
 				"type": "string"
 			},
 			"schema_name": {
