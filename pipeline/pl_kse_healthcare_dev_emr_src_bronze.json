@@ -142,7 +142,7 @@
 												"parameters": {
 													"container": "bronze",
 													"file_path": {
-														"value": "@concat(item().datasource,'/Archive/','/',formatDateTime(utcNow(),'yyyy'),'/',formatDateTime(utcNow(),'%M'),'/',formatDateTime(utcNow(),'%d'))",
+														"value": "@concat(item().targetpath,'/Archive/','/',formatDateTime(utcNow(),'yyyy'),'/',formatDateTime(utcNow(),'%M'),'/',formatDateTime(utcNow(),'%d'))",
 														"type": "Expression"
 													},
 													"file_name": "@split(item().tablename,'.')[1]"
@@ -265,7 +265,10 @@
 										"typeProperties": {
 											"source": {
 												"type": "AzureSqlSource",
-												"sqlReaderQuery": "@concat(\n  'select *,''',\n  item().datasource,\n  ''' as datasource from ',\n  item().tablename,\n  ' where ',\n  item().watermark,\n  ' >= ''',\n  activity('Fetch_Logs').output.firstRow.last_fetched_date,\n  '''')",
+												"sqlReaderQuery": {
+													"value": "@concat(\n  'select *,''',\n  item().datasource,\n  ''' as datasource from ',\n  item().tablename,\n  ' where ',\n  item().watermark,\n  ' >= ''',\n  activity('Fetch_Logs').output.firstRow.last_fetched_date,\n  '''')",
+													"type": "Expression"
+												},
 												"queryTimeout": "02:00:00",
 												"partitionOption": "None"
 											},
