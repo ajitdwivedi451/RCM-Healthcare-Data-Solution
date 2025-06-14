@@ -178,7 +178,7 @@
 														"parameters": {
 															"container": "bronze",
 															"file_path": {
-																"value": "@concat(item().datasource,'/Archive/','/',formatDateTime(utcNow(),'yyyy'),'/',formatDateTime(utcNow(),'%M'),'/',formatDateTime(utcNow(),'%d'))",
+																"value": "@concat(item().targetpath,'/Archive/','/',formatDateTime(utcNow(),'yyyy'),'/',formatDateTime(utcNow(),'%M'),'/',formatDateTime(utcNow(),'%d'))",
 																"type": "Expression"
 															},
 															"file_name": "@split(item().tablename,'.')[1]"
