@@ -1,5 +1,11 @@
 # Introduction 
 TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+This project is healthcare care RCM(Revenue cycle management) for kaimur services healthcare company. which has two branch so both brach have different raw data. as as data engineering in this project we configure common data model for both the branc in data bricks.the data for this project is as follow
+1. Emr Data
+  1. patient.csv
+  2. transaction.csv
+  3. departemtns.csv
+  
 
 # Getting Started
 TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
