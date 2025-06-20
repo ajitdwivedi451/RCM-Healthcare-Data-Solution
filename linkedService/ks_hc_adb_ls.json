@@ -1,11 +1,10 @@
 {
-	"name": "ks_adb_delta_lake_ls",
+	"name": "ks_hc_adb_ls",
 	"properties": {
 		"annotations": [],
-		"type": "AzureDatabricksDeltaLake",
+		"type": "AzureDatabricks",
 		"typeProperties": {
 			"domain": "https://adb-736661075860223.3.azuredatabricks.net",
-			"clusterId": "0613-113926-toaozbbx",
 			"accessToken": {
 				"type": "AzureKeyVaultSecret",
 				"store": {
@@ -13,7 +12,8 @@
 					"type": "LinkedServiceReference"
 				},
 				"secretName": "ks-dev-adb-acc-tkn"
-			}
+			},
+			"existingClusterId": "0613-113926-toaozbbx"
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/linkedservices"

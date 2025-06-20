@@ -1,0 +1,47 @@
+{
+	"name": "pl_ks_end_to_end",
+	"properties": {
+		"activities": [
+			{
+				"name": "pl_kse_healthcare_dev_emr_src_bronze",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_kse_healthcare_dev_emr_src_bronze",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Pl_kse_silver_gold_notebooks",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "pl_kse_healthcare_dev_emr_src_bronze",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Pl_kse_silver_gold_notebooks",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": []
+	}
+}

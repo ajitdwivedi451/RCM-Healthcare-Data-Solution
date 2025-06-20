@@ -1,0 +1,382 @@
+{
+	"name": "Pl_kse_silver_gold_notebooks",
+	"properties": {
+		"activities": [
+			{
+				"name": "sil_transactions",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 2,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": {
+						"value": "/Users/ajitdwivedi452@gmail.com/silver_layer_notebooks/Transactions",
+						"type": "Expression"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "ks_hc_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "sil_patients",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 2,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/ajitdwivedi452@gmail.com/silver_layer_notebooks/Patient"
+				},
+				"linkedServiceName": {
+					"referenceName": "ks_hc_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "sil_provider_fl",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/ajitdwivedi452@gmail.com/silver_layer_notebooks/Providers_F"
+				},
+				"linkedServiceName": {
+					"referenceName": "ks_hc_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "sil_departments",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 2,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/ajitdwivedi452@gmail.com/silver_layer_notebooks/Departments_F"
+				},
+				"linkedServiceName": {
+					"referenceName": "ks_hc_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "sil_cpt_codes",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 2,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/ajitdwivedi452@gmail.com/silver_layer_notebooks/CPT codes"
+				},
+				"linkedServiceName": {
+					"referenceName": "ks_hc_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "sil_icd_codes",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 2,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/ajitdwivedi452@gmail.com/silver_layer_notebooks/API_Extract/ICD Code API extract"
+				},
+				"linkedServiceName": {
+					"referenceName": "ks_hc_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "sil_npi",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 2,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/ajitdwivedi452@gmail.com/silver_layer_notebooks/API_Extract/NPI API extract"
+				},
+				"linkedServiceName": {
+					"referenceName": "ks_hc_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "sil_encounters",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 2,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/ajitdwivedi452@gmail.com/silver_layer_notebooks/Encounters"
+				},
+				"linkedServiceName": {
+					"referenceName": "ks_hc_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "sil_claims",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 2,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/ajitdwivedi452@gmail.com/silver_layer_notebooks/Claims"
+				},
+				"linkedServiceName": {
+					"referenceName": "ks_hc_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "gold_transaction",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "sil_transactions",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 1,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/ajitdwivedi452@gmail.com/gold_layer_notebooks/fact_transactions"
+				},
+				"linkedServiceName": {
+					"referenceName": "ks_hc_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "gold_patient",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "sil_patients",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 2,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/ajitdwivedi452@gmail.com/gold_layer_notebooks/dim_patient"
+				},
+				"linkedServiceName": {
+					"referenceName": "ks_hc_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "gold_dim_provider",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "sil_provider_fl",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 2,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/ajitdwivedi452@gmail.com/gold_layer_notebooks/dim_provider"
+				},
+				"linkedServiceName": {
+					"referenceName": "ks_hc_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "gold_dim_department",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "sil_departments",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 2,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/ajitdwivedi452@gmail.com/gold_layer_notebooks/dim_department"
+				},
+				"linkedServiceName": {
+					"referenceName": "ks_hc_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "gold_dim_cpt_code",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "sil_cpt_codes",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 2,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/ajitdwivedi452@gmail.com/gold_layer_notebooks/dim_cpt_code"
+				},
+				"linkedServiceName": {
+					"referenceName": "ks_hc_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "gold_dim_icd_code",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "sil_icd_codes",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 2,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/ajitdwivedi452@gmail.com/gold_layer_notebooks/dim_icd_code"
+				},
+				"linkedServiceName": {
+					"referenceName": "ks_hc_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "gold_dim_npi",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "sil_npi",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 2,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/ajitdwivedi452@gmail.com/gold_layer_notebooks/dim_npi"
+				},
+				"linkedServiceName": {
+					"referenceName": "ks_hc_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-06-02T17:24:24Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
