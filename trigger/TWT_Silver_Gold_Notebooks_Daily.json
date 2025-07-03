@@ -9,6 +9,12 @@
 					"referenceName": "pl_emr_src_bronze",
 					"type": "PipelineReference"
 				}
+			},
+			{
+				"pipelineReference": {
+					"referenceName": "Pl_kse_silver_gold_notebooks",
+					"type": "PipelineReference"
+				}
 			}
 		],
 		"type": "ScheduleTrigger",
