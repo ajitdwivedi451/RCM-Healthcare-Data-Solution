@@ -1,0 +1,24 @@
+{
+	"name": "ST_Emr_Src_Bronze_Monthly",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "pl_kse_healthcare_dev_emr_src_bronze",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Month",
+				"interval": 15,
+				"startTime": "2025-07-03T20:24:00",
+				"timeZone": "India Standard Time"
+			}
+		}
+	}
+}
