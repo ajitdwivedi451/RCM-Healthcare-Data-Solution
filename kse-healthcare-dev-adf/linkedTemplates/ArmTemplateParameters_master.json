@@ -5,20 +5,23 @@
 		"factoryName": {
 			"value": "kse-healthcare-dev-adf"
 		},
-		"ks_adb_delta_lake_ls_accessToken": {
-			"value": ""
-		},
-		"ks_adls_gen2_ls_accountKey": {
+		"AzureDatabricksDeltaLake1_accessToken": {
 			"value": ""
 		},
 		"ks_azure_sql_db_ls_connectionString": {
-			"value": ""
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=kse-hc-sql-db-srv.database.windows.net;Initial Catalog=@{linkedService().db_name};User ID=kaimurservices"
 		},
 		"ks_adls_gen2_ls_properties_typeProperties_url": {
 			"value": "https://kaimurservicesdevdata.dfs.core.windows.net/"
 		},
+		"ks_hc_adb_ls_properties_typeProperties_existingClusterId": {
+			"value": "0613-113926-toaozbbx"
+		},
 		"ks_kv_ls_properties_typeProperties_baseUrl": {
 			"value": "https://kse-healthcare-kv.vault.azure.net/"
+		},
+		"EBT_Src_Bronze_Trigger_properties_typeProperties_scope": {
+			"value": "/subscriptions/1e67ddc6-2a36-4f25-9932-9beaf3aee7f6/resourceGroups/ks_rg/providers/Microsoft.Storage/storageAccounts/kaimurservicesdevdata"
 		},
 		"containerUri": {
 			"value": ""

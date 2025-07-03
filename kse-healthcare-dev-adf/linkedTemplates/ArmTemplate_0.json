@@ -7,25 +7,30 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "kse-healthcare-dev-adf"
 		},
-		"ks_adb_delta_lake_ls_accessToken": {
+		"AzureDatabricksDeltaLake1_accessToken": {
 			"type": "secureString",
-			"metadata": "Secure string for 'accessToken' of 'ks_adb_delta_lake_ls'"
-		},
-		"ks_adls_gen2_ls_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'ks_adls_gen2_ls'"
+			"metadata": "Secure string for 'accessToken' of 'AzureDatabricksDeltaLake1'"
 		},
 		"ks_azure_sql_db_ls_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'ks_azure_sql_db_ls'"
+			"metadata": "Secure string for 'connectionString' of 'ks_azure_sql_db_ls'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=kse-hc-sql-db-srv.database.windows.net;Initial Catalog=@{linkedService().db_name};User ID=kaimurservices"
+		},
+		"ks_kv_ls_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://kse-healthcare-kv.vault.azure.net/"
 		},
 		"ks_adls_gen2_ls_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://kaimurservicesdevdata.dfs.core.windows.net/"
 		},
-		"ks_kv_ls_properties_typeProperties_baseUrl": {
+		"ks_hc_adb_ls_properties_typeProperties_existingClusterId": {
 			"type": "string",
-			"defaultValue": "https://kse-healthcare-kv.vault.azure.net/"
+			"defaultValue": "0613-113926-toaozbbx"
+		},
+		"EBT_Src_Bronze_Trigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/1e67ddc6-2a36-4f25-9932-9beaf3aee7f6/resourceGroups/ks_rg/providers/Microsoft.Storage/storageAccounts/kaimurservicesdevdata"
 		}
 	},
 	"variables": {
@@ -33,7 +38,7 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/ks_adb_delta_lake_ls')]",
+			"name": "[concat(parameters('factoryName'), '/AzureDatabricksDeltaLake1')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -44,43 +49,8 @@
 					"clusterId": "0613-113926-toaozbbx",
 					"accessToken": {
 						"type": "SecureString",
-						"value": "[parameters('ks_adb_delta_lake_ls_accessToken')]"
+						"value": "[parameters('AzureDatabricksDeltaLake1_accessToken')]"
 					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ks_adls_gen2_ls')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('ks_adls_gen2_ls_properties_typeProperties_url')]",
-					"accountKey": {
-						"type": "SecureString",
-						"value": "[parameters('ks_adls_gen2_ls_accountKey')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ks_azure_sql_db_ls')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"parameters": {
-					"db_name": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('ks_azure_sql_db_ls_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -97,6 +67,519 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ks_adb_delta_lake_ls')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricksDeltaLake",
+				"typeProperties": {
+					"domain": "https://adb-736661075860223.3.azuredatabricks.net",
+					"clusterId": "0613-113926-toaozbbx",
+					"accessToken": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "ks_kv_ls",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "ks-dev-adb-acc-tkn"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ks_kv_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ks_adls_gen2_ls')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ks_adls_gen2_ls_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "ks_kv_ls",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "kse-adls-strorage-acc-key"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ks_kv_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ks_azure_sql_db_ls')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"db_name": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('ks_azure_sql_db_ls_connectionString')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "ks_kv_ls",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "ks-sql-srv-pwd"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ks_kv_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ks_hc_adb_ls')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-736661075860223.3.azuredatabricks.net",
+					"accessToken": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "ks_kv_ls",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "ks-dev-adb-acc-tkn"
+					},
+					"existingClusterId": "[parameters('ks_hc_adb_ls_properties_typeProperties_existingClusterId')]"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ks_kv_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Pl_kse_silver_gold_notebooks')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "sil_transactions",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 2,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": {
+								"value": "/Users/ajitdwivedi452@gmail.com/silver_layer_notebooks/Transactions",
+								"type": "Expression"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "ks_hc_adb_ls",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "sil_patients",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 2,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/ajitdwivedi452@gmail.com/silver_layer_notebooks/Patient"
+						},
+						"linkedServiceName": {
+							"referenceName": "ks_hc_adb_ls",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "sil_provider_fl",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/ajitdwivedi452@gmail.com/silver_layer_notebooks/Providers_F"
+						},
+						"linkedServiceName": {
+							"referenceName": "ks_hc_adb_ls",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "sil_departments",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 2,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/ajitdwivedi452@gmail.com/silver_layer_notebooks/Departments_F"
+						},
+						"linkedServiceName": {
+							"referenceName": "ks_hc_adb_ls",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "sil_cpt_codes",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 2,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/ajitdwivedi452@gmail.com/silver_layer_notebooks/CPT codes"
+						},
+						"linkedServiceName": {
+							"referenceName": "ks_hc_adb_ls",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "sil_icd_codes",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 2,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/ajitdwivedi452@gmail.com/silver_layer_notebooks/API_Extract/ICD Code API extract"
+						},
+						"linkedServiceName": {
+							"referenceName": "ks_hc_adb_ls",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "sil_npi",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 2,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/ajitdwivedi452@gmail.com/silver_layer_notebooks/API_Extract/NPI API extract"
+						},
+						"linkedServiceName": {
+							"referenceName": "ks_hc_adb_ls",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "sil_encounters",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 2,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/ajitdwivedi452@gmail.com/silver_layer_notebooks/Encounters"
+						},
+						"linkedServiceName": {
+							"referenceName": "ks_hc_adb_ls",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "sil_claims",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 2,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/ajitdwivedi452@gmail.com/silver_layer_notebooks/Claims"
+						},
+						"linkedServiceName": {
+							"referenceName": "ks_hc_adb_ls",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "gold_transaction",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "sil_transactions",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/ajitdwivedi452@gmail.com/gold_layer_notebooks/fact_transactions"
+						},
+						"linkedServiceName": {
+							"referenceName": "ks_hc_adb_ls",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "gold_patient",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "sil_patients",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 2,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/ajitdwivedi452@gmail.com/gold_layer_notebooks/dim_patient"
+						},
+						"linkedServiceName": {
+							"referenceName": "ks_hc_adb_ls",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "gold_dim_provider",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "sil_provider_fl",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 2,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/ajitdwivedi452@gmail.com/gold_layer_notebooks/dim_provider"
+						},
+						"linkedServiceName": {
+							"referenceName": "ks_hc_adb_ls",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "gold_dim_department",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "sil_departments",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 2,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/ajitdwivedi452@gmail.com/gold_layer_notebooks/dim_department"
+						},
+						"linkedServiceName": {
+							"referenceName": "ks_hc_adb_ls",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "gold_dim_cpt_code",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "sil_cpt_codes",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 2,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/ajitdwivedi452@gmail.com/gold_layer_notebooks/dim_cpt_code"
+						},
+						"linkedServiceName": {
+							"referenceName": "ks_hc_adb_ls",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "gold_dim_icd_code",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "sil_icd_codes",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 2,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/ajitdwivedi452@gmail.com/gold_layer_notebooks/dim_icd_code"
+						},
+						"linkedServiceName": {
+							"referenceName": "ks_hc_adb_ls",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "gold_dim_npi",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "sil_npi",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 2,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/ajitdwivedi452@gmail.com/gold_layer_notebooks/dim_npi"
+						},
+						"linkedServiceName": {
+							"referenceName": "ks_hc_adb_ls",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-06-02T17:24:24Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ks_hc_adb_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Parquet1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ks_adls_gen2_ls",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "hosa",
+						"fileSystem": "bronze"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ks_adls_gen2_ls')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ks_adb_delta_lake_ds')]",
@@ -273,6 +756,357 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/pl_emr_src_bronze')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "if condition load check",
+						"type": "IfCondition",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(pipeline().parameters.load_type,'Full')",
+								"type": "Expression"
+							},
+							"ifFalseActivities": [
+								{
+									"name": "Fetch_Logs",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 1,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureDatabricksDeltaLakeSource",
+											"query": {
+												"value": "@concat(\n    'SELECT coalesce(cast(max(loaddate) as date), ''1900-01-01'') as last_fetched_date ',\n    'from audit.load_logs ',\n    'where tablename = ''', pipeline().parameters.table_name, \n    ''' and data_source = ''', pipeline().parameters.datasource, ''''\n)",
+												"type": "Expression"
+											}
+										},
+										"dataset": {
+											"referenceName": "ks_adb_delta_lake_ds",
+											"type": "DatasetReference",
+											"parameters": {
+												"schema_name": "'aa'",
+												"table_name": "'a'"
+											}
+										}
+									}
+								},
+								{
+									"name": "Incremental_Load_CP",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "Fetch_Logs",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 2,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@concat(\n  'select *,''',\n  pipeline().parameters.datasource,\n  ''' as datasource from ',\n  pipeline().parameters.table_name,\n  ' where ',\n  pipeline().parameters.watermark,\n  ' >= ''',\n  activity('Fetch_Logs').output.firstRow.last_fetched_date,\n  '''')",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "ks_sql_db_ds",
+											"type": "DatasetReference",
+											"parameters": {
+												"db_name": {
+													"value": "@pipeline().parameters.db_name",
+													"type": "Expression"
+												},
+												"schema_name": {
+													"value": "@split(pipeline().parameters.table_name,'.')[0]",
+													"type": "Expression"
+												},
+												"table_name": {
+													"value": "@split(pipeline().parameters.table_name,'.')[1]",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ks_adls_parquet_ds",
+											"type": "DatasetReference",
+											"parameters": {
+												"container": "bronze",
+												"file_path": {
+													"value": "@pipeline().parameters.target_path",
+													"type": "Expression"
+												},
+												"file_name": {
+													"value": "@split(pipeline().parameters.table_name,'.')[1] ",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "Insert_increamenral_load",
+									"type": "Lookup",
+									"dependsOn": [
+										{
+											"activity": "Incremental_Load_CP",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureDatabricksDeltaLakeSource",
+											"query": {
+												"value": "@concat('insert into audit.load_logs(data_source,tablename,numberofrowscopied,watermarkcolumnname,loaddate) values(''',pipeline().parameters.datasource,''',''',pipeline().parameters.table_name,''',''',activity('Incremental_Load_CP').output.rowscopied,''',''',pipeline().parameters.watermark,''',''',utcNow(),''')')",
+												"type": "Expression"
+											}
+										},
+										"dataset": {
+											"referenceName": "ks_adb_delta_lake_ds",
+											"type": "DatasetReference",
+											"parameters": {
+												"schema_name": "'aa'",
+												"table_name": "'a'"
+											}
+										}
+									}
+								}
+							],
+							"ifTrueActivities": [
+								{
+									"name": "Copy_Full_load",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 2,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@concat('select *,''', pipeline().parameters.datasource, ''' as datasource from ', pipeline().parameters.table_name)",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "ks_sql_db_ds",
+											"type": "DatasetReference",
+											"parameters": {
+												"db_name": {
+													"value": "@pipeline().parameters.db_name",
+													"type": "Expression"
+												},
+												"schema_name": "@split(pipeline().parameters.table_name,'.')[0]",
+												"table_name": {
+													"value": "@split(pipeline().parameters.table_name,'.')[1]",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ks_adls_parquet_ds",
+											"type": "DatasetReference",
+											"parameters": {
+												"container": "bronze",
+												"file_path": {
+													"value": "@pipeline().parameters.target_path",
+													"type": "Expression"
+												},
+												"file_name": {
+													"value": "@split(pipeline().parameters.table_name,'.')[1]",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "Insert_Load_logs",
+									"description": "insert loading  details",
+									"type": "Lookup",
+									"dependsOn": [
+										{
+											"activity": "Copy_Full_load",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 1,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureDatabricksDeltaLakeSource",
+											"query": {
+												"value": "@concat('insert into audit.load_logs(data_source,tablename,numberofrowscopied,watermarkcolumnname,loaddate) values(''',pipeline().parameters.datasource,''',''',pipeline().parameters.table_name,''',''',activity('Copy_Full_load').output.rowscopied,''',''',pipeline().parameters.watermark,''',''',utcNow(),''')')",
+												"type": "Expression"
+											}
+										},
+										"dataset": {
+											"referenceName": "ks_adb_delta_lake_ds",
+											"type": "DatasetReference",
+											"parameters": {
+												"schema_name": "'aa'",
+												"table_name": "'a'"
+											}
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"db_name": {
+						"type": "string"
+					},
+					"table_name": {
+						"type": "string"
+					},
+					"load_type": {
+						"type": "string"
+					},
+					"target_path": {
+						"type": "string"
+					},
+					"watermark": {
+						"type": "string"
+					},
+					"datasource": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ks_adb_delta_lake_ds')]",
+				"[concat(variables('factoryId'), '/datasets/ks_sql_db_ds')]",
+				"[concat(variables('factoryId'), '/datasets/ks_adls_parquet_ds')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TWT_Silver_Gold_Notebooks_Monthly')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Pl_kse_silver_gold_notebooks",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Month",
+						"interval": 1,
+						"startTime": "2025-07-03T20:23:00",
+						"timeZone": "India Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Pl_kse_silver_gold_notebooks')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/pl_kse_healthcare_dev_emr_src_bronze')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -360,7 +1194,7 @@
 												"dependsOn": [],
 												"policy": {
 													"timeout": "0.12:00:00",
-													"retry": 2,
+													"retry": 1,
 													"retryIntervalInSeconds": 30,
 													"secureOutput": false,
 													"secureInput": false
@@ -436,7 +1270,7 @@
 									"dependsOn": [],
 									"policy": {
 										"timeout": "0.12:00:00",
-										"retry": 2,
+										"retry": 0,
 										"retryIntervalInSeconds": 30,
 										"secureOutput": false,
 										"secureInput": false
@@ -472,7 +1306,7 @@
 									}
 								},
 								{
-									"name": "if condition load check",
+									"name": "If Condition2",
 									"type": "IfCondition",
 									"dependsOn": [
 										{
@@ -485,275 +1319,48 @@
 									"userProperties": [],
 									"typeProperties": {
 										"expression": {
-											"value": "@equals(item().loadtype,'Full')",
+											"value": "@equals(item().is_active,'1')",
 											"type": "Expression"
 										},
-										"ifFalseActivities": [
-											{
-												"name": "Fetch_Logs",
-												"type": "Lookup",
-												"dependsOn": [],
-												"policy": {
-													"timeout": "0.12:00:00",
-													"retry": 2,
-													"retryIntervalInSeconds": 30,
-													"secureOutput": false,
-													"secureInput": false
-												},
-												"userProperties": [],
-												"typeProperties": {
-													"source": {
-														"type": "AzureDatabricksDeltaLakeSource",
-														"query": {
-															"value": "@concat(\n    'SELECT coalesce(cast(max(loaddate) as date), ''1900-01-01'') as last_fetched_date ',\n    'from audit.load_logs ',\n    'where tablename = ''', item().tablename, \n    ''' and data_source = ''', item().datasource, ''''\n)\n",
-															"type": "Expression"
-														}
-													},
-													"dataset": {
-														"referenceName": "ks_adb_delta_lake_ds",
-														"type": "DatasetReference",
-														"parameters": {
-															"schema_name": "'aa'",
-															"table_name": "'a'"
-														}
-													}
-												}
-											},
-											{
-												"name": "Incremental_Load_CP",
-												"type": "Copy",
-												"dependsOn": [
-													{
-														"activity": "Fetch_Logs",
-														"dependencyConditions": [
-															"Succeeded"
-														]
-													}
-												],
-												"policy": {
-													"timeout": "0.12:00:00",
-													"retry": 2,
-													"retryIntervalInSeconds": 30,
-													"secureOutput": false,
-													"secureInput": false
-												},
-												"userProperties": [],
-												"typeProperties": {
-													"source": {
-														"type": "AzureSqlSource",
-														"sqlReaderQuery": {
-															"value": "@concat(\n  'select *,''',\n  item().datasource,\n  ''' as datasource from ',\n  item().tablename,\n  ' where ',\n  item().watermark,\n  ' >= ''',\n  activity('Fetch_Logs').output.firstRow.last_fetched_date,\n  '''')",
-															"type": "Expression"
-														},
-														"queryTimeout": "02:00:00",
-														"partitionOption": "None"
-													},
-													"sink": {
-														"type": "ParquetSink",
-														"storeSettings": {
-															"type": "AzureBlobFSWriteSettings"
-														},
-														"formatSettings": {
-															"type": "ParquetWriteSettings"
-														}
-													},
-													"enableStaging": false,
-													"translator": {
-														"type": "TabularTranslator",
-														"typeConversion": true,
-														"typeConversionSettings": {
-															"allowDataTruncation": true,
-															"treatBooleanAsNumber": false
-														}
-													}
-												},
-												"inputs": [
-													{
-														"referenceName": "ks_sql_db_ds",
-														"type": "DatasetReference",
-														"parameters": {
-															"db_name": {
-																"value": "@item().database",
-																"type": "Expression"
-															},
-															"schema_name": {
-																"value": "@split(item().tablename,'.')[0]",
-																"type": "Expression"
-															},
-															"table_name": {
-																"value": "@split(item().tablename,'.')[1]",
-																"type": "Expression"
-															}
-														}
-													}
-												],
-												"outputs": [
-													{
-														"referenceName": "ks_adls_parquet_ds",
-														"type": "DatasetReference",
-														"parameters": {
-															"container": "bronze",
-															"file_path": {
-																"value": "@item().targetpath",
-																"type": "Expression"
-															},
-															"file_name": {
-																"value": "@split(item().tablename,'.')[1] ",
-																"type": "Expression"
-															}
-														}
-													}
-												]
-											},
-											{
-												"name": "Insert_increamenral_load",
-												"type": "Lookup",
-												"dependsOn": [
-													{
-														"activity": "Incremental_Load_CP",
-														"dependencyConditions": [
-															"Succeeded"
-														]
-													}
-												],
-												"policy": {
-													"timeout": "0.12:00:00",
-													"retry": 0,
-													"retryIntervalInSeconds": 30,
-													"secureOutput": false,
-													"secureInput": false
-												},
-												"userProperties": [],
-												"typeProperties": {
-													"source": {
-														"type": "AzureDatabricksDeltaLakeSource",
-														"query": {
-															"value": "@concat('insert into audit.load_logs(data_source,tablename,numberofrowscopied,watermarkcolumnname,loaddate) values(''',item().datasource,''',''',item().tablename,''',''',activity('Incremental_Load_CP').output.rowscopied,''',''',item().watermark,''',''',utcNow(),''')')",
-															"type": "Expression"
-														}
-													},
-													"dataset": {
-														"referenceName": "ks_adb_delta_lake_ds",
-														"type": "DatasetReference",
-														"parameters": {
-															"schema_name": "'aa'",
-															"table_name": "'a'"
-														}
-													}
-												}
-											}
-										],
 										"ifTrueActivities": [
 											{
-												"name": "Copy_Full_load",
-												"type": "Copy",
+												"name": "exec_pl_emr_src_bronze",
+												"type": "ExecutePipeline",
 												"dependsOn": [],
 												"policy": {
-													"timeout": "0.12:00:00",
-													"retry": 2,
-													"retryIntervalInSeconds": 30,
-													"secureOutput": false,
 													"secureInput": false
 												},
 												"userProperties": [],
 												"typeProperties": {
-													"source": {
-														"type": "AzureSqlSource",
-														"sqlReaderQuery": {
-															"value": "@concat('select *,''', item().datasource, ''' as datasource from ', item().tablename)",
+													"pipeline": {
+														"referenceName": "pl_emr_src_bronze",
+														"type": "PipelineReference"
+													},
+													"waitOnCompletion": true,
+													"parameters": {
+														"db_name": {
+															"value": "@item().database",
 															"type": "Expression"
 														},
-														"queryTimeout": "02:00:00",
-														"partitionOption": "None"
-													},
-													"sink": {
-														"type": "ParquetSink",
-														"storeSettings": {
-															"type": "AzureBlobFSWriteSettings"
-														},
-														"formatSettings": {
-															"type": "ParquetWriteSettings"
-														}
-													},
-													"enableStaging": false,
-													"translator": {
-														"type": "TabularTranslator",
-														"typeConversion": true,
-														"typeConversionSettings": {
-															"allowDataTruncation": true,
-															"treatBooleanAsNumber": false
-														}
-													}
-												},
-												"inputs": [
-													{
-														"referenceName": "ks_sql_db_ds",
-														"type": "DatasetReference",
-														"parameters": {
-															"db_name": {
-																"value": "@item().database",
-																"type": "Expression"
-															},
-															"schema_name": "@split(item().tablename,'.')[0]",
-															"table_name": {
-																"value": "@split(item().tablename,'.')[1]",
-																"type": "Expression"
-															}
-														}
-													}
-												],
-												"outputs": [
-													{
-														"referenceName": "ks_adls_parquet_ds",
-														"type": "DatasetReference",
-														"parameters": {
-															"container": "bronze",
-															"file_path": {
-																"value": "@item().targetpath",
-																"type": "Expression"
-															},
-															"file_name": {
-																"value": "@split(item().tablename,'.')[1]",
-																"type": "Expression"
-															}
-														}
-													}
-												]
-											},
-											{
-												"name": "Insert_Load_logs",
-												"description": "insert loading  details",
-												"type": "Lookup",
-												"dependsOn": [
-													{
-														"activity": "Copy_Full_load",
-														"dependencyConditions": [
-															"Succeeded"
-														]
-													}
-												],
-												"policy": {
-													"timeout": "0.12:00:00",
-													"retry": 2,
-													"retryIntervalInSeconds": 30,
-													"secureOutput": false,
-													"secureInput": false
-												},
-												"userProperties": [],
-												"typeProperties": {
-													"source": {
-														"type": "AzureDatabricksDeltaLakeSource",
-														"query": {
-															"value": "@concat('insert into audit.load_logs(data_source,tablename,numberofrowscopied,watermarkcolumnname,loaddate) values(''',item().datasource,''',''',item().tablename,''',''',activity('Copy_Full_load').output.rowscopied,''',''',item().watermark,''',''',utcNow(),''')')",
+														"table_name": {
+															"value": "@item().tablename",
 															"type": "Expression"
-														}
-													},
-													"dataset": {
-														"referenceName": "ks_adb_delta_lake_ds",
-														"type": "DatasetReference",
-														"parameters": {
-															"schema_name": "'aa'",
-															"table_name": "'a'"
+														},
+														"load_type": {
+															"value": "@item().loadtype",
+															"type": "Expression"
+														},
+														"target_path": {
+															"value": "@item().targetpath",
+															"type": "Expression"
+														},
+														"watermark": {
+															"value": "@item().watermark",
+															"type": "Expression"
+														},
+														"datasource": {
+															"value": "@item().datasource",
+															"type": "Expression"
 														}
 													}
 												}
@@ -768,13 +1375,173 @@
 				"policy": {
 					"elapsedTimeMetric": {}
 				},
-				"annotations": []
+				"annotations": [],
+				"lastPublishTime": "2025-06-14T06:14:03Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ks_adls_flat_file_ds')]",
 				"[concat(variables('factoryId'), '/datasets/ks_adls_parquet_ds')]",
-				"[concat(variables('factoryId'), '/datasets/ks_adb_delta_lake_ds')]",
-				"[concat(variables('factoryId'), '/datasets/ks_sql_db_ds')]"
+				"[concat(variables('factoryId'), '/pipelines/pl_emr_src_bronze')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/EBT_Src_Bronze_Trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "pl_emr_src_bronze",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/bronze/blobs/hosa",
+					"blobPathEndsWith": "*.csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('EBT_Src_Bronze_Trigger_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_emr_src_bronze')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ST_ks_end_end_Daily')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "pl_emr_src_bronze",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2025-07-03T20:13:00",
+						"timeZone": "India Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_emr_src_bronze')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TWT_EMR_SRC_Bronze_Hourly')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipeline": {
+					"pipelineReference": {
+						"referenceName": "pl_emr_src_bronze",
+						"type": "PipelineReference"
+					},
+					"parameters": {}
+				},
+				"type": "TumblingWindowTrigger",
+				"typeProperties": {
+					"frequency": "Hour",
+					"interval": 1,
+					"startTime": "2025-07-03T19:56:00Z",
+					"delay": "00:00:00",
+					"maxConcurrency": 50,
+					"retryPolicy": {
+						"intervalInSeconds": 30
+					},
+					"dependsOn": []
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_emr_src_bronze')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TWT_Ks_End_TO_End_Daily')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "pl_emr_src_bronze",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 15,
+						"startTime": "2025-07-03T20:20:00",
+						"timeZone": "India Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_emr_src_bronze')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TWT_Silver_Gold_Notebooks_Daily')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "pl_emr_src_bronze",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					},
+					{
+						"pipelineReference": {
+							"referenceName": "Pl_kse_silver_gold_notebooks",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2025-07-03T20:19:00",
+						"timeZone": "India Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_emr_src_bronze')]",
+				"[concat(variables('factoryId'), '/pipelines/Pl_kse_silver_gold_notebooks')]"
 			]
 		}
 	]
