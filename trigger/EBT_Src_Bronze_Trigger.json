@@ -1,0 +1,25 @@
+{
+	"name": "EBT_Src_Bronze_Trigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "pl_emr_src_bronze",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/bronze/blobs/hosa",
+			"blobPathEndsWith": "*.csv",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/1e67ddc6-2a36-4f25-9932-9beaf3aee7f6/resourceGroups/ks_rg/providers/Microsoft.Storage/storageAccounts/kaimurservicesdevdata",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}
