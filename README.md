@@ -36,7 +36,7 @@ This project integrates data from **Electronic Medical Records (EMR)** and **Cla
 
 ---
 
-### 🧾 EMR Data (via Azure SQL Database - Hosp A & B)
+###  EMR Data (via Azure SQL Database - Hosp A & B)
 
 | Table Name     | Description                                      |
 |----------------|--------------------------------------------------|
@@ -46,11 +46,11 @@ This project integrates data from **Electronic Medical Records (EMR)** and **Cla
 | `Transaction`  | Billing and payment-related data                 |
 | `Encounter`    | Patient visits, inpatient/outpatient episodes    |
 
-✅ Ingested using **Azure Data Factory** into the **Bronze Layer** (raw zone).
+Ingested using **Azure Data Factory** into the **Bronze Layer** (raw zone).
 
 ---
 
-### 💼 Claims Data (via ADLS Gen2 + Public APIs)
+### Claims Data (via ADLS Gen2 + Public APIs)
 
 - Claims files are **manually or systemically dumped** by external **insurance companies** into the **landing zone (ADLS Gen2)**
 - Ingested using **ADF pipelines**
@@ -69,7 +69,7 @@ This project integrates data from **Electronic Medical Records (EMR)** and **Cla
 
 ➡️ Both EMR and Claims data were standardized and validated before transformation in the **Silver Layer**.
 
-## 🧱 Lakehouse Architecture Overview
+## Lakehouse Architecture Overview
 
 Ingestion Landing → Bronze Layer → Silver Layer → Gold Layer → Reporting/KPIs
 
@@ -96,7 +96,7 @@ Data was transformed and processed using **Azure Databricks** with **PySpark** n
 
 ---
 
-## 🔐 Data Governance with Unity Catalog
+## Data Governance with Unity Catalog
 
 To enable secure and organized data governance:
 
@@ -147,7 +147,7 @@ CI/CD ensures consistency, repeatability, and faster delivery across environment
 ---
 
 
-## 🛠️ Tools & Technologies
+## Tools & Technologies
 
 | Category               | Tools/Technologies |
 |------------------------|--------------------|
