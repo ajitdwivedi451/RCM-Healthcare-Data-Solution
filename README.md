@@ -15,7 +15,7 @@ This project delivers a complete **enterprise-grade end-to-end data engineering 
 
 ---
 ## Architecture Diagram
-![Architecture Diagram](images/architecture.png)
+![Architecture Diagram](architecture-diagram.png)
 
 ---
 ## Data Ingestion & Sources
@@ -26,6 +26,7 @@ Data was extracted from multiple source systems:
 - **Azure Data Lake Storage Gen2** (Landing Zone)
 - **Manual Uploads** (CSV/Excel files) claims data
 - **Public REST APIs**
+- ![Architecture Diagram]architecture-diagram.png)
 
 All sources were ingested using **Azure Data Factory (ADF)** pipelines and landed into the **Bronze Layer** of **ADLS Gen2**, forming the raw zone for further processing.
 
