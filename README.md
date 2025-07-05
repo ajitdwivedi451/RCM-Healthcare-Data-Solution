@@ -28,10 +28,11 @@ Data was extracted from multiple source systems:
 - **Public REST APIs**
 - ![Database1](screenshots/azure-sql-ss/azure_sql_database_hosb.png)
 - ![Database2](screenshots/azure-sql-ss/azure_sql_db_hosa.png)
-- ![Datalake](screenshots/Storage_Account/adls-gen-2-containers.png)
+- ![Datalake](screenshots/Storage Account/adls-gen-2-containers.png)
 
 
 All sources were ingested using **Azure Data Factory (ADF)** pipelines and landed into the **Bronze Layer** of **ADLS Gen2**, forming the raw zone for further processing.
+
 
 ---
 ## Data Source Details
@@ -51,6 +52,8 @@ This project integrates data from **Electronic Medical Records (EMR)** and **Cla
 | `Encounter`    | Patient visits, inpatient/outpatient episodes    |
 
 Ingested using **Azure Data Factory** into the **Bronze Layer** (raw zone).
+![ADF](screenshots/azure-sql-ss/data-factory.png)
+![ADF](screenshots/azure-sql-ss/bronze-data.png)
 
 ---
 
@@ -68,10 +71,13 @@ Ingested using **Azure Data Factory** into the **Bronze Layer** (raw zone).
   | `ICD API`          | Diagnosis Codes   |
 
 🔄 This external reference data is fetched using **Databricks notebooks (PySpark)**, integrated, validated, and then written into the **Bronze Layer**.
+![databricks workspace](screenshots/azure-sql-ss/workspace.png) 
+![Api Extract Notebooks](screenshots/azure-sql-ss/silver-api.png)
 
 ---
 
 ➡️ Both EMR and Claims data were standardized and validated before transformation in the **Silver Layer**.
+![silver layer notebooks](screenshots/azure-sql-ss/silver-notebooks.png)
 
 ## Lakehouse Architecture Overview
 
@@ -109,21 +115,17 @@ To enable secure and organized data governance:
   - Table-level, column-level, and row-level permissions
 - Structured data as:
 Catalog > Schema > Table
-
-yaml
-Copy
-Edit
+![Unity Catalogs](screenshots/databrick/unitycatalog.png)
 - Enabled:
 - **Data lineage tracking**
 - **Audit logging**
-- **Multi-tenant access control**
-
+- **Multi-tenant access control
 ---
 
 ## Secret Management with Azure Key Vault
 
 Integrated **Azure Key Vault** to securely manage secrets:
-
+![key vault](screenshots/azure-sql-ss/key-vault.png)
 - Stored:
 - Database credentials
 - Connection strings
@@ -136,10 +138,15 @@ Integrated **Azure Key Vault** to securely manage secrets:
 
 ---
 
+## resource gruops
+- ![key vault](screenshots/resource-group/resource-group.png)
+
+---
+
 ## 🔄 CI/CD Automation (Azure DevOps)
 
 Set up a automated CI/CD pipeline using:
-
+![ADF](screenshots/azure-devops/ado-repo.png)
 - **Azure DevOps Pipelines** for deployment automation
 - **Databricks Repos** with GitHub integration for version control
 - **ARM Templates ** for Infrastructure as Code (IaC)
