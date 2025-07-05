@@ -85,6 +85,19 @@ Ingestion Landing → Bronze Layer → Silver Layer → Gold Layer → Reporting
 
 
 - **Bronze Layer**: Raw ingested data
+  ![silver layer notebooks](screenshots/storage-account/bronze-data.png)
+  - Claims
+     ![silver layer notebooks](screenshots/storage-account/bronze/claims-data.png)
+  - CPT Codes
+     ![silver layer notebooks](screenshots/storage-account/bronze/cpt-codes.png)
+  - Hosa
+    ![silver layer notebooks](screenshots/storage-account/bronze/hospital-a-bronze-data-parquet.png)
+  - Hosb
+     ![silver layer notebooks](screenshots/storage-account/bronze/hospital-b-data-parquet.png)
+  - ICD Code
+     ![silver layer notebooks](screenshots/storage-account/bronze/icd-codes.png)
+  - NPI data
+     ![silver layer notebooks](screenshots/storage-account/bronze/npi-data.png)
 - **Silver Layer**: Cleaned & standardized data
  ![silver layer notebooks](screenshots/storage-account/gold-latest-delta-data.png)
 - **Gold Layer**: Business-ready curated datasets
