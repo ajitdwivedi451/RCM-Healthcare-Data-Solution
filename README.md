@@ -26,9 +26,13 @@ Data was extracted from multiple source systems:
 - **Azure Data Lake Storage Gen2** (Landing Zone)
 - **Manual Uploads** (CSV/Excel files) claims data
 - **Public REST APIs**
-- ![Database1](azure_sql_database_hosb.png)
-- ![Database2](azure_sql_db_hosa.png)
-- ![Datalake](adls-gen-2-containers.png)
+- ![Database1](RCM-Healthcare-Data-Solution/screenshots
+/azure-sql-ss/azure_sql_database_hosb.png)
+- ![Database2](RCM-Healthcare-Data-Solution/screenshots
+/azure-sql-ss/azure_sql_db_hosa.png)
+- ![Datalake](RCM-Healthcare-Data-Solution/screenshots/Storage Account
+/adls-gen-2-containers.png
+)
 
 All sources were ingested using **Azure Data Factory (ADF)** pipelines and landed into the **Bronze Layer** of **ADLS Gen2**, forming the raw zone for further processing.
 
