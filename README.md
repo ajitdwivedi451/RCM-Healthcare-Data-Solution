@@ -28,7 +28,7 @@ Data was extracted from multiple source systems:
 - **Public REST APIs**
 - ![Database1](screenshots/azure-sql-ss/azure_sql_database_hosb.png)
 - ![Database2](screenshots/azure-sql-ss/azure_sql_db_hosa.png)
-- ![Datalake](screenshots/Storage Account/adls-gen-2-containers.png)
+- ![Datalake](screenshots/storage-account/adls-gen-2-containers.png)
 
 
 All sources were ingested using **Azure Data Factory (ADF)** pipelines and landed into the **Bronze Layer** of **ADLS Gen2**, forming the raw zone for further processing.
@@ -52,8 +52,8 @@ This project integrates data from **Electronic Medical Records (EMR)** and **Cla
 | `Encounter`    | Patient visits, inpatient/outpatient episodes    |
 
 Ingested using **Azure Data Factory** into the **Bronze Layer** (raw zone).
-![ADF](screenshots/azure-sql-ss/data-factory.png)
-![ADF](screenshots/azure-sql-ss/bronze-data.png)
+![ADF](screenshots/datafactory/data-factory.png)
+![ADF](screenshots/storage-account/bronze-data.png)
 
 ---
 
@@ -71,13 +71,13 @@ Ingested using **Azure Data Factory** into the **Bronze Layer** (raw zone).
   | `ICD API`          | Diagnosis Codes   |
 
 🔄 This external reference data is fetched using **Databricks notebooks (PySpark)**, integrated, validated, and then written into the **Bronze Layer**.
-![databricks workspace](screenshots/azure-sql-ss/workspace.png) 
-![Api Extract Notebooks](screenshots/azure-sql-ss/silver-api.png)
+![databricks workspace](screenshots/databricks/workspace.png) 
+![Api Extract Notebooks](screenshot/databricks/silver-api.png)
 
 ---
 
 ➡️ Both EMR and Claims data were standardized and validated before transformation in the **Silver Layer**.
-![silver layer notebooks](screenshots/azure-sql-ss/silver-notebooks.png)
+![silver layer notebooks](screenshots/databricks/silver-notebooks.png)
 
 ## Lakehouse Architecture Overview
 
@@ -115,7 +115,7 @@ To enable secure and organized data governance:
   - Table-level, column-level, and row-level permissions
 - Structured data as:
 Catalog > Schema > Table
-![Unity Catalogs](screenshots/databrick/unitycatalog.png)
+![Unity Catalogs](screenshots/databricks/unitycatalog.png)
 - Enabled:
 - **Data lineage tracking**
 - **Audit logging**
@@ -125,7 +125,7 @@ Catalog > Schema > Table
 ## Secret Management with Azure Key Vault
 
 Integrated **Azure Key Vault** to securely manage secrets:
-![key vault](screenshots/azure-sql-ss/key-vault.png)
+![key vault](screenshots/key-vault/key-vault.png)
 - Stored:
 - Database credentials
 - Connection strings
