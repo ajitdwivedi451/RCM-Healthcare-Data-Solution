@@ -1,4 +1,4 @@
-#RCM Healthcare Data Solution (Azure + Databricks)
+## RCM Healthcare Data Solution (Azure + Databricks)
 
 This project delivers a complete **enterprise-grade end-to-end data engineering solution** on the Azure ecosystem using **Azure Data Factory**, **Azure Data Lake**, **Azure Databricks**, **Unity Catalog**, **Azure Key Vault**, and **CI/CD automation**. The goal is to securely and efficiently process data from ingestion to insight for downstream analytics and reporting.
 
