@@ -26,13 +26,10 @@ Data was extracted from multiple source systems:
 - **Azure Data Lake Storage Gen2** (Landing Zone)
 - **Manual Uploads** (CSV/Excel files) claims data
 - **Public REST APIs**
-- ![Database1](screenshots
-/azure-sql-ss/azure_sql_database_hosb.png)
-- ![Database2](screenshots
-/azure-sql-ss/azure_sql_db_hosa.png)
-- ![Datalake](screenshots/Storage Account
-/adls-gen-2-containers.png
-)
+- ![Database1](screenshots/azure-sql-ss/azure_sql_database_hosb.png)
+- ![Database2](screenshots/azure-sql-ss/azure_sql_db_hosa.png)
+- ![Datalake](screenshots/Storage_Account/adls-gen-2-containers.png)
+
 
 All sources were ingested using **Azure Data Factory (ADF)** pipelines and landed into the **Bronze Layer** of **ADLS Gen2**, forming the raw zone for further processing.
 
