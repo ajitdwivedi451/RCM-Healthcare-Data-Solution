@@ -72,7 +72,7 @@ Ingested using **Azure Data Factory** into the **Bronze Layer** (raw zone).
 
 🔄 This external reference data is fetched using **Databricks notebooks (PySpark)**, integrated, validated, and then written into the **Bronze Layer**.
 ![databricks workspace](screenshots/databricks/workspace.png) 
-![Api Extract Notebooks](screenshot/databricks/silver-api.png)
+![Api Extract Notebooks](screenshots/databricks/silver-api.png)
 
 ---
 
@@ -86,7 +86,9 @@ Ingestion Landing → Bronze Layer → Silver Layer → Gold Layer → Reporting
 
 - **Bronze Layer**: Raw ingested data
 - **Silver Layer**: Cleaned & standardized data
+ ![silver layer notebooks](screenshots/storage-account/gold-latest-delta-data.png)
 - **Gold Layer**: Business-ready curated datasets
+  ![silver layer notebooks](screenshots/storage-account/silver-latest-delta-data.png)
 
 ---
 ## Data Processing & Transformation (Azure Databricks)
